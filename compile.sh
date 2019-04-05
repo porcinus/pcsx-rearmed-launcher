@@ -1,0 +1,1 @@
+g++ pcsx-rearmed-launcher.cpp -o pcsx-rearmed-launcher
