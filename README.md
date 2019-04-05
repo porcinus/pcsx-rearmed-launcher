@@ -12,6 +12,7 @@ This is done using somes "security" :
  - 0.1a : Initial release.
 
 # Limitations
+The launcher isn't design to work with savestates.
 If user load another game will into PCSX-ReARMed, the launcher will not be able to update the memcard filename.
 For example, you start GAME1, the launcher will create GAME1.srm but if you load GAME2 from PCSX-ReARMed menu, the memcard used will stay GAME1.srm.
 Note : PCSX-ReARMed standalone version is not able to load .m3u file.
@@ -20,3 +21,6 @@ Note : PCSX-ReARMed standalone version is not able to load .m3u file.
  - in '/opt/retropie/configs/psx', edit emulators.cfg and add 'pcsx-rearmed-launcher = "pushd /opt/retropie/emulators/pcsx-rearmed; ./pcsx-rearmed-launcher -cdfile %ROM%; popd"'.
  - Copy 'pcsx-rearmed-launcher.cpp' to '/opt/retropie/emulators/pcsx-rearmed' and compile it running 'g++ pcsx-rearmed-launcher.cpp -o pcsx-rearmed-launcher'.
  - Start a PSX game into EmulationStation and press A to edit setting and set default emulator to 'pcsx-rearmed-launcher'.
+
+# Issues
+If you have any troubles, please open a Issues, explain your problem as clearly as possible and attach '/dev/shm/runcommand.log' file to the post.
