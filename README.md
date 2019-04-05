@@ -19,7 +19,7 @@ Note : PCSX-ReARMed standalone version is not able to load .m3u file.
 
 # Setup
  - in '/opt/retropie/configs/psx', edit emulators.cfg and add 'pcsx-rearmed-launcher = "pushd /opt/retropie/emulators/pcsx-rearmed; ./pcsx-rearmed-launcher -cdfile %ROM%; popd"'.
- - Copy 'pcsx-rearmed-launcher.cpp' to '/opt/retropie/emulators/pcsx-rearmed' and compile it running 'g++ pcsx-rearmed-launcher.cpp -o pcsx-rearmed-launcher'.
+ - Copy 'pcsx-rearmed-launcher.cpp' to `/opt/retropie/emulators/pcsx-rearmed` and compile it running 'g++ pcsx-rearmed-launcher.cpp -o pcsx-rearmed-launcher'.
  - Before starting any game, you should consider backup all '.srm' files located in '/home/pi/RetroPie/roms/psx'.
  - Start a PSX game into EmulationStation and press A to edit setting and set default emulator to 'pcsx-rearmed-launcher'.
 
