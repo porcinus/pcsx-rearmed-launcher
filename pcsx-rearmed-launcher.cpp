@@ -37,8 +37,8 @@ void show_usage(void){
 "Version: %s\n"
 "Example: ./pcsx-rearmed-launcher -cdfile \"/home/pi/RetroPie/roms/psx/GAME.img\"\n"
 "Options:\n"
-"\t-cdfile, full path to game image\n"
-"Note: additional arguments will be pass through to pcsx run command line\n"
+"\t-cdfile, Full path to game image\n"
+"Note: Additional arguments will be pass through to PCSX run command line\n"
 ,programversion);
 }
 
@@ -50,58 +50,59 @@ int main(int argc, char *argv[]){ //main
 	
 	//check if cdfile provided
 	if(gamepath==NULL){fprintf(stderr,"pcsx-rearmed-launcher : Failed, game path not specified, use -cdfile argument to do so\n");show_usage();return 1;
-	}else{fprintf(stderr,"pcsx-rearmed-launcher : game path : \"%s\"\n",gamepath);}
+	}else{fprintf(stderr,"pcsx-rearmed-launcher : Game path : \"%s\"\n",gamepath);}
 	
 	//check if "blank" memcard exist, used if current game don't have it own
 	if(access(memcard_blank,R_OK)!=0){
-		fprintf(stderr,"pcsx-rearmed-launcher : Warning, blank memcard not readable : \"%s\", trying to create one using \"%s\"\n",memcard_blank,memcard_blank_rescue);
+		fprintf(stderr,"pcsx-rearmed-launcher : Blank memcard not readable : \"%s\", trying to create a new one using \"%s\"\n",memcard_blank,memcard_blank_rescue);
 		sprintf(commandline_temp,"cp \"%s\" \"%s\"",memcard_blank_rescue,memcard_blank); //build command line to copy game memcard
 		system(commandline_temp); //run command
 		if(access(memcard_blank,R_OK)!=0){fprintf(stderr,"pcsx-rearmed-launcher : Failed\n");return 1;
-		}else{fprintf(stderr,"pcsx-rearmed-launcher : blank memcard created with success : \"%s\"\n",memcard_blank);}
+		}else{fprintf(stderr,"pcsx-rearmed-launcher : Blank memcard created with success : \"%s\"\n",memcard_blank);}
 	}else{
-		fprintf(stderr,"pcsx-rearmed-launcher : blank memcard found : \"%s\"\n",memcard_blank);
+		fprintf(stderr,"pcsx-rearmed-launcher : Blank memcard found : \"%s\"\n",memcard_blank);
 	}
 	
 	//check if game memcard exist, copy blank memcard if not
 	strcpy(memcard_game,gamepath); //copy game image path to game memcard path
-  *strrchr(memcard_game, '.') = '\0'; //remove game image extension
+  *strrchr(memcard_game, '.')='\0'; //remove game image extension
 	strcat(memcard_game,".srm"); //add memcard extension
 	if(access(memcard_game,R_OK)!=0){
-		fprintf(stderr,"pcsx-rearmed-launcher : game memcard not readable (\"%s\"), trying to create one\n",memcard_game);
+		fprintf(stderr,"pcsx-rearmed-launcher : Game memcard not readable (\"%s\"), trying to create a new one\n",memcard_game);
 		sprintf(commandline_temp, "cp \"%s\" \"%s\"",memcard_blank,memcard_game); //build command line to copy game memcard
 		system(commandline_temp); //run command
 		if(access(memcard_game,R_OK)!=0){fprintf(stderr,"pcsx-rearmed-launcher : Failed\n");return 1;
-		}else{fprintf(stderr,"pcsx-rearmed-launcher : game memcard created with success : \"%s\"\n",memcard_game);}
+		}else{fprintf(stderr,"pcsx-rearmed-launcher : Game memcard created with success : \"%s\"\n",memcard_game);}
 	}else{
-		fprintf(stderr,"pcsx-rearmed-launcher : game memcard found : \"%s\"\n",memcard_game);
+		fprintf(stderr,"pcsx-rearmed-launcher : Game memcard found : \"%s\"\n",memcard_game);
 	}
 	
 	//check if card1.mcd in pcsx folder is a symlink or a real file
-	if(access(memcard_pcsx,R_OK)!=0){fprintf(stderr,"pcsx-rearmed-launcher : pcsx memcard not readable : \"%s\"\n",memcard_game);}
+	if(access(memcard_pcsx,R_OK)!=0){fprintf(stderr,"pcsx-rearmed-launcher : PCSX memcard not readable : \"%s\"\n",memcard_game);}
 	lstat(memcard_pcsx,&filestat); //lstat pcsx memcard
 	if(S_ISREG(filestat.st_mode)){ //is not a symlink
 		sprintf(commandline_temp, "mv \"%s\" \"%s.bak\"",memcard_pcsx,memcard_pcsx); //build command line to backup pcsx memcard, overwrite if backup pcsx memcard already exist
 		system(commandline_temp); //run command
 		memcard_pcsx_real=true;
-		fprintf(stderr,"pcsx-rearmed-launcher : pcsx memcard backup : \"%s.bak\"\n",memcard_pcsx);
+		fprintf(stderr,"pcsx-rearmed-launcher : PCSX memcard backup to \"%s.bak\"\n",memcard_pcsx);
 	}else if(S_ISLNK(filestat.st_mode)){ //is a symlink
 		sprintf(commandline_temp, "rm \"%s\"",memcard_pcsx); //build command line to pcsx memcard symlink
 		system(commandline_temp); //run command
-		fprintf(stderr,"pcsx-rearmed-launcher : pcsx memcard symlink removed\n");
+		fprintf(stderr,"pcsx-rearmed-launcher : Previous symlink removed\n");
 	}
 	
+	//create symlink
 	sprintf(commandline_temp, "ln -s \"%s\" \"%s\"",memcard_game,memcard_pcsx); //build command line to create symlink
 	system(commandline_temp); //run command
 	lstat(memcard_pcsx,&filestat); //lstat pcsx memcard
-	if(S_ISLNK(filestat.st_mode)&&access(memcard_pcsx,R_OK)==0){fprintf(stderr,"pcsx-rearmed-launcher : symlink created with success\n"); //is a symlink
-	}else{
-		fprintf(stderr,"pcsx-rearmed-launcher : Failed to create symlink, revert back\n"); //is a symlink
+	if(S_ISLNK(filestat.st_mode)&&access(memcard_pcsx,R_OK)==0){fprintf(stderr,"pcsx-rearmed-launcher : Symlink created with success\n"); //is a symlink
+	}else{ //fail to create 
+		fprintf(stderr,"pcsx-rearmed-launcher : Failed to create symlink, PCSX memcard will be used : \"%s\"\n",memcard_pcsx);
 		if(memcard_pcsx_real){
 			sprintf(commandline_temp, "mv \"%s.bak\" \"%s\"",memcard_pcsx,memcard_pcsx); //build command line to restore backup pcsx memcard
 			system(commandline_temp); //run command
 			memcard_pcsx_real=false;
-			fprintf(stderr,"pcsx-rearmed-launcher : pcsx original memcard restored\n");
+			fprintf(stderr,"pcsx-rearmed-launcher : PCSX original memcard restored\n");
 		}
 	}
 	
@@ -126,17 +127,17 @@ int main(int argc, char *argv[]){ //main
 	}
 	
 	//start pcsx
-	fprintf(stderr,"pcsx-rearmed-launcher : running pcsx : %s\n",commandline_temp);
+	fprintf(stderr,"pcsx-rearmed-launcher : Running PCSX : %s\n",commandline_temp);
 	system(commandline_temp); //run command
 	
 	//pcsx closed
-	fprintf(stderr,"pcsx-rearmed-launcher : pcsx closed\n");
+	fprintf(stderr,"pcsx-rearmed-launcher : PCSX closed\n");
 	
 	//restore pcsx memcard
 	if(memcard_pcsx_real){
 		sprintf(commandline_temp, "mv \"%s.bak\" \"%s\"",memcard_pcsx,memcard_pcsx); //build command line to restore backup pcsx memcard
 		system(commandline_temp); //run command
-		fprintf(stderr,"pcsx-rearmed-launcher : pcsx original memcard restored\n");
+		fprintf(stderr,"pcsx-rearmed-launcher : PCSX original memcard restored\n");
 	}
 	
 	return(0);
