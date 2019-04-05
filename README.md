@@ -7,7 +7,10 @@ This is done using somes "security" :
  - If the "blank" memcard file not exist, use 'pcsx/memcards/card9.mcd' to create it.
  - If the game never been played with Retroarch, launcher will create a "blank" memcard.
  - If card1.mcd is a file, backup it before creating the symlink and restore it when closing the emulator.
- 
+
+# History
+ - 0.1a : Initial release.
+
 # Limitations
 If user load another game will into PCSX-ReARMed, the launcher will not be able to update the memcard filename.
 For example, you start GAME1, the launcher will create GAME1.srm but if you load GAME2 from PCSX-ReARMed menu, the memcard used will stay GAME1.srm.
