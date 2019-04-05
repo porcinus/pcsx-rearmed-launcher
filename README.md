@@ -15,7 +15,8 @@ This is done using somes "security" :
 The launcher isn't design to work with save states.
 If user load another game will into PCSX-ReARMed, the launcher will not be able to update the memcard filename.
 For example, you start `GAME1`, the launcher will create `GAME1.srm` but if you load `GAME2` from PCSX-ReARMed menu, the memcard used will stay `GAME1.srm`.
-Note : PCSX-ReARMed standalone version is not able to load .m3u file.
+
+Important note : PCSX-ReARMed standalone version is not able to load `.m3u` file, you may need to convert your multi disk game using PSX2PSP to `.pbp` so you may also need to rename memcard files by your own.
 
 # Setup
  - in `/opt/retropie/configs/psx`, edit `emulators.cfg` and add `pcsx-rearmed-launcher = "pushd /opt/retropie/emulators/pcsx-rearmed; ./pcsx-rearmed-launcher -cdfile %ROM%; popd"`.
